@@ -1,0 +1,10 @@
+
+OBJ;Qual palavra-chave faz uma classe herdar de outra?;2;extends|implements|super|this;A
+
+
+VF;Uma classe abstrata pode ser instanciada com new.;1;F
+
+
+NUM;Quanto é 7 * 6?;2;42;0
+
+
