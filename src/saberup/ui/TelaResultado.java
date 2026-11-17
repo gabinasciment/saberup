@@ -1,13 +1,30 @@
 package saberup.ui;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
+import javax.swing.JOptionPane;
+import saberup.excecao.FormatoInvalidoException;
+import saberup.model.Questao;
+import saberup.model.Resultado;
+import saberup.persistencia.QuestaoRepository;
+
 /**
- * Tela de resultado (esboço): placar e nome do jogador.
- * Tudo o que aparece nela foi feito na aba Design.
+ * Tela de resultado: placar e nome do jogador.
+ * O visual foi feito na aba Design. A TelaQuiz manda os números prontos.
  */
 public class TelaResultado extends javax.swing.JFrame {
 
-    public TelaResultado() {
+    private int pontos;
+    private int pontosPossiveis;
+
+    public TelaResultado(int pontos, int pontosPossiveis, int acertos, int totalQuestoes) {
         initComponents();
+        this.pontos = pontos;
+        this.pontosPossiveis = pontosPossiveis;
+
+        lblPontos.setText(pontos + " pontos");
+        lblAcertos.setText(acertos + " de " + totalQuestoes + " acertos");
     }
 
     /**
@@ -111,13 +128,39 @@ public class TelaResultado extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        String nome = txtNome.getText().trim();   // trim tira os espaços das pontas
+
+        if (nome.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Digite o seu nome para entrar no ranking.",
+                    "Atenção", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (nome.contains(";")) {   // o ; separa as colunas do arquivo CSV
+            JOptionPane.showMessageDialog(this, "O nome não pode ter ponto e vírgula (;).",
+                    "Atenção", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Resultado resultado = new Resultado(nome, pontos, pontosPossiveis, LocalDate.now());
+
+        // TODO: quando o repositório do ranking ficar pronto, salvar aqui:
+        //   new RankingRepository().salvar(resultado);
+        System.out.println("Resultado: " + resultado.paraCsv());
+
         new TelaRanking().setVisible(true);
         dispose();
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnJogarDeNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJogarDeNovoActionPerformed
-        new TelaQuiz().setVisible(true);
-        dispose();
+        try {
+            List<Questao> questoes = new QuestaoRepository().carregar("dados/questoes.csv");
+            new TelaQuiz(questoes).setVisible(true);
+            dispose();
+        } catch (IOException | FormatoInvalidoException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Não foi possível carregar as questões.\n" + ex.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnJogarDeNovoActionPerformed
 
     private void txtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeActionPerformed
@@ -125,7 +168,8 @@ public class TelaResultado extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNomeActionPerformed
 
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(() -> new TelaResultado().setVisible(true));
+        // Números de exemplo, só para testar esta tela sozinha (Shift+F6)
+        java.awt.EventQueue.invokeLater(() -> new TelaResultado(4, 5, 2, 3).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

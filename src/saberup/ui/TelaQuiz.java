@@ -1,14 +1,116 @@
 package saberup.ui;
 
+import java.awt.Color;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
+import saberup.model.Questao;
+import saberup.model.QuestaoObjetiva;
+import saberup.model.QuestaoVerdadeiroFalso;
+import saberup.servico.Quiz;
+
 /**
- * Tela das perguntas (esboço).
- * Tudo o que aparece nela foi feito na aba Design.
- * Os textos são exemplos: depois eles serão trocados pelas questões de verdade.
+ * Tela das perguntas.
+ * O visual foi feito na aba Design. Aqui no código fica só o comportamento:
+ * mostrar a questão, ler a resposta e corrigir usando o Quiz (classe da Érika).
+ *
+ * Uma tela só serve para os 3 tipos de questão:
+ *   objetiva            -> rdoA, rdoB, rdoC, rdoD
+ *   verdadeiro ou falso -> rdoA (Verdadeiro) e rdoB (Falso)
+ *   numérica            -> txtResposta (campo de texto)
  */
 public class TelaQuiz extends javax.swing.JFrame {
 
-    public TelaQuiz() {
+    // Cores usadas para mostrar se acertou ou errou
+    private static final Color FUNDO = new Color(244, 245, 250);
+    private static final Color VERDE = new Color(46, 125, 50);
+    private static final Color VERMELHO = new Color(198, 40, 40);
+    private static final Color VERDE_CLARO = new Color(227, 244, 230);
+    private static final Color VERMELHO_CLARO = new Color(251, 228, 228);
+
+    private static final String[] LETRAS = {"A", "B", "C", "D"};
+
+    private Quiz quiz;                    // as regras do jogo ficam no Quiz
+    private int totalQuestoes;
+    private int numeroAtual = 1;          // para mostrar "Questão 1 de 3"
+    private int acertos = 0;
+    private boolean jaRespondeu = false;  // false: o botão corrige | true: o botão avança
+    private JRadioButton[] opcoes;        // rdoA..rdoD em um vetor, para usar no for
+
+    public TelaQuiz(List<Questao> questoes) {
         initComponents();
+        opcoes = new JRadioButton[]{rdoA, rdoB, rdoC, rdoD};
+        quiz = new Quiz(questoes);
+        totalQuestoes = questoes.size();
+        mostrarQuestao();
+    }
+
+    /** Coloca a questão atual na tela. */
+    private void mostrarQuestao() {
+        Questao questao = quiz.questaoAtual();
+
+        lblEnunciado.setText(questao.getEnunciado());
+        lblProgresso.setText("Questão " + numeroAtual + " de " + totalQuestoes);
+        lblPontos.setText("Pontos: " + quiz.getPontos());
+        barProgresso.setMaximum(totalQuestoes);
+        barProgresso.setValue(numeroAtual);
+        lblFeedback.setText(" ");
+
+        // Limpa e esconde tudo; depois mostra só o que esta questão precisa
+        grpAlternativas.clearSelection();
+        for (JRadioButton rdo : opcoes) {
+            rdo.setVisible(false);
+            rdo.setEnabled(true);
+            rdo.setBackground(FUNDO);
+        }
+        txtResposta.setVisible(false);
+        txtResposta.setText("");
+        txtResposta.setEditable(true);
+        txtResposta.setBackground(Color.WHITE);
+
+        if (questao instanceof QuestaoObjetiva) {
+            QuestaoObjetiva objetiva = (QuestaoObjetiva) questao;
+            List<String> alternativas = objetiva.getAlternativas();
+            for (int i = 0; i < 4; i++) {
+                opcoes[i].setText(LETRAS[i] + ") " + alternativas.get(i));
+                opcoes[i].setVisible(true);
+            }
+        } else if (questao instanceof QuestaoVerdadeiroFalso) {
+            rdoA.setText("Verdadeiro");
+            rdoB.setText("Falso");
+            rdoA.setVisible(true);
+            rdoB.setVisible(true);
+        } else {
+            txtResposta.setVisible(true);   // questão numérica
+        }
+    }
+
+    /**
+     * Devolve a resposta no formato que as classes de questão entendem:
+     * "A" a "D" (objetiva), "V" ou "F" (verdadeiro ou falso),
+     * o número digitado (numérica), ou "" se nada foi respondido.
+     */
+    private String lerResposta() {
+        Questao questao = quiz.questaoAtual();
+
+        if (questao instanceof QuestaoVerdadeiroFalso) {
+            if (rdoA.isSelected()) {
+                return "V";
+            }
+            if (rdoB.isSelected()) {
+                return "F";
+            }
+            return "";
+        }
+        if (questao instanceof QuestaoObjetiva) {
+            for (int i = 0; i < 4; i++) {
+                if (opcoes[i].isSelected()) {
+                    return LETRAS[i];
+                }
+            }
+            return "";
+        }
+        return txtResposta.getText().trim();   // numérica
     }
 
     /**
@@ -27,6 +129,7 @@ public class TelaQuiz extends javax.swing.JFrame {
         barProgresso = new javax.swing.JProgressBar();
         pnlCentro = new javax.swing.JPanel();
         lblEnunciado = new javax.swing.JLabel();
+        txtResposta = new javax.swing.JTextField();
         rdoA = new javax.swing.JRadioButton();
         rdoB = new javax.swing.JRadioButton();
         rdoC = new javax.swing.JRadioButton();
@@ -63,12 +166,15 @@ public class TelaQuiz extends javax.swing.JFrame {
 
         pnlCentro.setBackground(new java.awt.Color(244, 245, 250));
         pnlCentro.setBorder(javax.swing.BorderFactory.createEmptyBorder(24, 48, 16, 48));
-        pnlCentro.setLayout(new java.awt.GridLayout(6, 1, 0, 10));
+        pnlCentro.setLayout(new java.awt.GridLayout(7, 1, 0, 10));
 
         lblEnunciado.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
         lblEnunciado.setForeground(new java.awt.Color(43, 43, 58));
         lblEnunciado.setText("Aqui aparece o enunciado da pergunta?");
         pnlCentro.add(lblEnunciado);
+
+        txtResposta.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        pnlCentro.add(txtResposta);
 
         rdoA.setBackground(new java.awt.Color(244, 245, 250));
         grpAlternativas.add(rdoA);
@@ -130,14 +236,63 @@ public class TelaQuiz extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnResponderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResponderActionPerformed
-        // Por enquanto (esboço), o botão só leva para a tela de resultado
-        new TelaResultado().setVisible(true);
-        dispose();
-    }//GEN-LAST:event_btnResponderActionPerformed
+        // 2º clique: vai para a próxima questão ou para o resultado
+        if (jaRespondeu) {
+            if (quiz.temProxima()) {
+                quiz.avancar();
+                numeroAtual++;
+                jaRespondeu = false;
+                btnResponder.setText("Responder");
+                mostrarQuestao();
+            } else {
+                new TelaResultado(quiz.getPontos(), quiz.getPontosPossiveis(),
+                        acertos, totalQuestoes).setVisible(true);
+                dispose();
+            }
+            return;
+        }
 
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(() -> new TelaQuiz().setVisible(true));
-    }
+        // 1º clique: corrige
+        String resposta = lerResposta();
+        if (resposta.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Escolha ou digite uma resposta.",
+                    "Atenção", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Polimorfismo: o Quiz chama corrigir() e cada tipo de questão corrige do seu jeito
+        boolean acertou = quiz.responder(resposta);
+
+        if (acertou) {
+            acertos++;
+            lblFeedback.setText("Acertou!");
+            lblFeedback.setForeground(VERDE);
+        } else {
+            lblFeedback.setText("Errou!");
+            lblFeedback.setForeground(VERMELHO);
+        }
+
+        // Pinta a resposta escolhida de verde ou vermelho e trava as opções
+        Color cor = acertou ? VERDE_CLARO : VERMELHO_CLARO;
+        for (JRadioButton rdo : opcoes) {
+            if (rdo.isSelected()) {
+                rdo.setBackground(cor);
+            }
+            rdo.setEnabled(false);
+        }
+        if (txtResposta.isVisible()) {
+            txtResposta.setBackground(cor);
+            txtResposta.setEditable(false);
+        }
+
+        lblPontos.setText("Pontos: " + quiz.getPontos());
+        jaRespondeu = true;
+        if (quiz.temProxima()) {
+            btnResponder.setText("Próxima");
+        } else {
+            btnResponder.setText("Ver resultado");
+        }
+    }//GEN-LAST:event_btnResponderActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JProgressBar barProgresso;
@@ -154,5 +309,6 @@ public class TelaQuiz extends javax.swing.JFrame {
     private javax.swing.JRadioButton rdoB;
     private javax.swing.JRadioButton rdoC;
     private javax.swing.JRadioButton rdoD;
+    private javax.swing.JTextField txtResposta;
     // End of variables declaration//GEN-END:variables
 }

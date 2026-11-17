@@ -1,5 +1,12 @@
 package saberup.ui;
 
+import java.io.IOException;
+import java.util.List;
+import javax.swing.JOptionPane;
+import saberup.excecao.FormatoInvalidoException;
+import saberup.model.Questao;
+import saberup.persistencia.QuestaoRepository;
+
 /**
  * Tela inicial do SaberUp.
  * Tudo o que aparece nela foi feito na aba Design.
@@ -93,8 +100,16 @@ public class TelaMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnJogarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJogarActionPerformed
-        new TelaQuiz().setVisible(true);   // abre a tela do quiz
-        dispose();                         // fecha esta tela
+        try {
+            // Lê as questões do CSV (classe da Laysa)
+            List<Questao> questoes = new QuestaoRepository().carregar("dados/questoes.csv");
+            new TelaQuiz(questoes).setVisible(true);   // abre a tela do quiz
+            dispose();                                 // fecha esta tela
+        } catch (IOException | FormatoInvalidoException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Não foi possível carregar as questões.\n" + ex.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnJogarActionPerformed
 
     private void btnRankingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRankingActionPerformed

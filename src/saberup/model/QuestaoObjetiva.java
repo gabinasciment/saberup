@@ -19,8 +19,13 @@ public class QuestaoObjetiva extends Questao{
         
         this.alternativas = alternativas;
         this.gabarito = gabarito;
-        
-    }      
+
+    }
+
+    // Usado pela TelaQuiz para mostrar as alternativas nos botões
+    public List<String> getAlternativas() {
+        return alternativas;
+    }
 
 @Override
 public boolean corrigir(String resposta) {
