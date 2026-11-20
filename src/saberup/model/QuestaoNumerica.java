@@ -12,12 +12,12 @@ public class QuestaoNumerica extends Questao{
     private double gabarito;
     private double tolerancia;
 
-    public QuestaoNumerica(int id, String enunciado, int pontos, double gabarito, double tolerancia) {
-        super(id, enunciado, pontos);
+public QuestaoNumerica(int id, String enunciado, int pontos, double gabarito, double tolerancia) {
+    super(id, enunciado, 3);
 
-        this.gabarito = gabarito;
-        this.tolerancia = tolerancia;
-    }
+    this.gabarito = gabarito;
+    this.tolerancia = tolerancia;
+}
     
 @Override
 public boolean corrigir(String resposta) {

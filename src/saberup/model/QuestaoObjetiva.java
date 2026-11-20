@@ -14,11 +14,12 @@ public class QuestaoObjetiva extends Questao{
     private List<String> alternativas;
     private char gabarito;
     
-    public QuestaoObjetiva (int id, String enunciado, int pontos, List<String> alternativas, char gabarito){
-        super(id, enunciado, pontos);
+   public QuestaoObjetiva(int id, String enunciado, int pontos,
+    List<String> alternativas, char gabarito) {
+    super(id, enunciado, 1);
         
-        this.alternativas = alternativas;
-        this.gabarito = gabarito;
+    this.alternativas = alternativas;
+    this.gabarito = gabarito;
 
     }
 

@@ -13,10 +13,9 @@ public class QuestaoVerdadeiroFalso extends Questao {
     
     
 public QuestaoVerdadeiroFalso(int id, String enunciado, int pontos, boolean gabarito) {
-    super(id, enunciado, pontos);
+    super(id, enunciado, 2);
     this.gabarito = gabarito;
-    
-}  
+}
 
 @Override
 public boolean corrigir(String resposta) {

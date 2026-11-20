@@ -60,17 +60,24 @@ public boolean temProxima() {
     return indiceAtual < questoes.size() - 1;
 }
 
+
 public void avancar() {
     if (!respondida) {
         throw new IllegalStateException(
             "Responda à questão antes de avançar."
         );
     }
-    if (temProxima()) {
-        indiceAtual++;
-        respondida = false;
+
+    if (!temProxima()) {
+        throw new IllegalStateException(
+            "O quiz já chegou à última questão."
+        );
     }
+
+    indiceAtual++;
+    respondida = false;
 }
+
 
 
 public int getPontos() {

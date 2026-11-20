@@ -50,7 +50,7 @@ public class TelaQuiz extends javax.swing.JFrame {
         Questao questao = quiz.questaoAtual();
 
         lblEnunciado.setText(questao.getEnunciado());
-        lblProgresso.setText("Questão " + numeroAtual + " de " + totalQuestoes);
+        lblProgresso.setText("Questão " + numeroAtual + " de " + totalQuestoes + " — Vale " + questao.getPontos() + " ponto(s)");
         lblPontos.setText("Pontos: " + quiz.getPontos());
         barProgresso.setMaximum(totalQuestoes);
         barProgresso.setValue(numeroAtual);
