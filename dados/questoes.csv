@@ -1,10 +1,25 @@
 
-OBJ;Qual palavra-chave faz uma classe herdar de outra?;2;extends|implements|super|this;A
 
+OBJ;Qual é a função principal dos ribossomos nas células?;2;Produzir energia|Sintetizar proteínas|Armazenar água|Realizar fotossíntese;B
+VF;A fotossíntese transforma energia luminosa em energia química.;1;V
+NUM;Quantos cromossomos existem normalmente em uma célula somática humana?;1;46;0
+OBJ;Qual é o resultado de uma equação 2x + 6 = 20?;1;5|6|7|8;C
+NUM;Qual é a raiz quadrada de 144?;1;12;0
+VF;Todo número primo é ímpar.;2;F
+OBJ;Qual figura de linguagem aparece na frase O vento sussurrava entre as árvores?;2;Hipérbole|Personificação|Antítese|Eufemismo;B
+OBJ;Qual das palavras abaixo é um substantivo abstrato?;1;Mesa|Caderno|Felicidade|Árvore;C
+VF;O sujeito de uma oração pode ser oculto.;1;V
+OBJ;Em que ano ocorreu a Independência do Brasil?;1;1500|1822|1889|1930;B
+VF;A Revolução Industrial teve início na Inglaterra.;1;V
+OBJ;Qual acontecimento marcou o início da Idade Contemporânea?;2;Queda de Roma|Revolução Francesa|Primeira Guerra Mundial|Revolução Russa;B
+OBJ;Qual é a camada da atmosfera onde ocorrem a maioria dos fenômenos meteorológicos?;2;Estratosfera|Mesosfera|Troposfera|Termosfera;C
+VF;O Brasil está localizado inteiramente no Hemisfério Sul.;1;F
+OBJ;Qual bioma brasileiro apresenta vegetação adaptada a longos períodos de seca?;2;Amazônia|Pampa|Caatinga|Pantanal;C
+OBJ;Qual é o símbolo químico do sódio?;1;S|Na|So|Sd;B
+NUM;Qual é o número atômico do carbono?;1;6;0
+VF;A água é formada por dois átomos de hidrogênio e um de oxigênio.;1;V
+OBJ;Qual grandeza física é medida em newtons?;2;Energia|Potência|Força|Velocidade;C
+NUM;Um carro percorre 120 km em 2 horas. Qual é sua velocidade média em km/h?;2;60;0
 
-VF;Uma classe abstrata pode ser instanciada com new.;1;F
-
-
-NUM;Quanto é 7 * 6?;2;42;0
 
 
