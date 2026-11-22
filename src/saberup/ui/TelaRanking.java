@@ -1,14 +1,62 @@
 package saberup.ui;
 
+import java.io.IOException;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import saberup.persistencia.RankingRepository;
+
 /**
- * Tela do ranking (esboço): uma tabela com os melhores resultados.
- * Tudo o que aparece nela foi feito na aba Design.
- * As colunas da tabela ficam na propriedade "model" da tblRanking.
+ * Tela do ranking: uma tabela com os melhores resultados.
+ * O visual foi feito na aba Design (as colunas ficam na propriedade "model" da tblRanking).
+ * Aqui no código fica só o preenchimento da tabela com o arquivo do ranking.
  */
 public class TelaRanking extends javax.swing.JFrame {
 
     public TelaRanking() {
         initComponents();
+        centralizarColunas();
+        carregarRanking();
+    }
+
+    /** Lê o ranking (já ordenado do maior para o menor) e coloca as linhas na tabela. */
+    private void carregarRanking() {
+        DefaultTableModel modelo = (DefaultTableModel) tblRanking.getModel();
+        modelo.setRowCount(0);   // limpa a tabela
+
+        try {
+            // Cada item vem no formato "nome;pontos" (classe da Laysa)
+            List<String> ranking = new RankingRepository().carregar(TelaResultado.ARQUIVO_RANKING);
+
+            int posicao = 1;
+            for (String registro : ranking) {
+                String[] partes = registro.split(";");
+                modelo.addRow(new Object[]{posicao + "º", partes[0], partes[1]});
+                posicao++;
+            }
+
+            if (ranking.isEmpty()) {
+                lblTitulo.setText("Ranking — ainda não há resultados");
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Não foi possível carregar o ranking.\n" + ex.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /** Centraliza as colunas "Pos" e "Pontos" e deixa a coluna do nome mais larga. */
+    private void centralizarColunas() {
+        DefaultTableCellRenderer centro = new DefaultTableCellRenderer();
+        centro.setHorizontalAlignment(SwingConstants.CENTER);
+        tblRanking.getColumnModel().getColumn(0).setCellRenderer(centro);
+        tblRanking.getColumnModel().getColumn(2).setCellRenderer(centro);
+
+        tblRanking.getColumnModel().getColumn(0).setPreferredWidth(60);
+        tblRanking.getColumnModel().getColumn(1).setPreferredWidth(400);
+        tblRanking.getColumnModel().getColumn(2).setPreferredWidth(100);
     }
 
     /**
@@ -53,11 +101,11 @@ public class TelaRanking extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Pos", "Jogador", "Pontos", "Data"
+                "Pos", "Jogador", "Pontos"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {

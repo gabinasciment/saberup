@@ -1,13 +1,12 @@
 package saberup.ui;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 import javax.swing.JOptionPane;
 import saberup.excecao.FormatoInvalidoException;
 import saberup.model.Questao;
-import saberup.model.Resultado;
 import saberup.persistencia.QuestaoRepository;
+import saberup.persistencia.RankingRepository;
 
 /**
  * Tela de resultado: placar e nome do jogador.
@@ -15,16 +14,18 @@ import saberup.persistencia.QuestaoRepository;
  */
 public class TelaResultado extends javax.swing.JFrame {
 
+    /** Arquivo onde o ranking é guardado (o mesmo que a TelaRanking lê). */
+    static final String ARQUIVO_RANKING = "dados/ranking.csv";
+
     private int pontos;
-    private int pontosPossiveis;
 
     public TelaResultado(int pontos, int pontosPossiveis, int acertos, int totalQuestoes) {
         initComponents();
         this.pontos = pontos;
-        this.pontosPossiveis = pontosPossiveis;
 
-        lblPontos.setText(pontos + " pontos");
+        lblPontos.setText(pontos + " de " + pontosPossiveis + " pontos");
         lblAcertos.setText(acertos + " de " + totalQuestoes + " acertos");
+        getRootPane().setDefaultButton(btnSalvar);   // Enter salva no ranking
     }
 
     /**
@@ -49,7 +50,7 @@ public class TelaResultado extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SaberUp - Resultado");
-        setPreferredSize(new java.awt.Dimension(520, 480));
+        setPreferredSize(new java.awt.Dimension(600, 500));
         setResizable(false);
 
         pnlTopo.setBackground(new java.awt.Color(37, 59, 117));
@@ -141,11 +142,15 @@ public class TelaResultado extends javax.swing.JFrame {
             return;
         }
 
-        Resultado resultado = new Resultado(nome, pontos, pontosPossiveis, LocalDate.now());
-
-        // TODO: quando o repositório do ranking ficar pronto, salvar aqui:
-        //   new RankingRepository().salvar(resultado);
-        System.out.println("Resultado: " + resultado.paraCsv());
+        try {
+            // Grava "nome;pontos" no arquivo do ranking (classe da Laysa)
+            new RankingRepository().salvar(ARQUIVO_RANKING, nome, pontos);
+        } catch (IOException | IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Não foi possível salvar no ranking.\n" + ex.getMessage(),
+                    "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         new TelaRanking().setVisible(true);
         dispose();
@@ -164,7 +169,8 @@ public class TelaResultado extends javax.swing.JFrame {
     }//GEN-LAST:event_btnJogarDeNovoActionPerformed
 
     private void txtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeActionPerformed
-        // TODO add your handling code here:
+        // Apertar Enter no campo do nome faz o mesmo que clicar em "Salvar no ranking"
+        btnSalvarActionPerformed(evt);
     }//GEN-LAST:event_txtNomeActionPerformed
 
     public static void main(String args[]) {
